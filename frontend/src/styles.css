@@ -1,0 +1,11 @@
+body {
+  background: #0789c8;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
