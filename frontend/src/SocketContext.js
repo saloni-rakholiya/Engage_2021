@@ -128,6 +128,7 @@ const ContextProvider = ({ children }) => {
     myVideo.current.srcObject
       .getTracks()
       .map((t) => (t.kind == "video" ? (t.enabled = true) : null));
+
     setVideoOn(true);
   };
 
