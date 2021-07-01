@@ -1,7 +1,14 @@
 import React, { useContext } from "react";
 import { Grid, Typography, Paper, makeStyles, Button } from "@material-ui/core";
 import { SocketContext } from "../SocketContext";
-import { VolumeOff, VideocamOff, Videocam, VolumeUp } from "@material-ui/icons";
+import {
+  VolumeOff,
+  VideocamOff,
+  Videocam,
+  VolumeUp,
+  ScreenShare,
+  StopScreenShare,
+} from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   video: {
@@ -26,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
 const Video = () => {
   const {
     name,
+    shareScreen,
     callAccepted,
     myVideo,
     userVideo,
@@ -34,12 +42,26 @@ const Video = () => {
     voiceOn,
     videoOn,
     stream,
+    shareScreenNow,
+    stopShareScreenNow,
     call,
+    startVideo,
     cancelVideo,
     enableAudio,
     enableVideo,
   } = useContext(SocketContext);
   const classes = useStyles();
+  console.log(stream);
+  if (stream) {
+    stream.getVideoTracks()[0].onended = () => {
+      console.log("OHOHOHO");
+      {
+        {
+          videoOn && startVideo();
+        }
+      }
+    };
+  }
 
   return (
     <Grid container className={classes.boxx}>
@@ -65,6 +87,16 @@ const Video = () => {
               ) : (
                 <Button onClick={enableAudio}>
                   <VolumeUp />
+                </Button>
+              )}
+
+              {shareScreen ? (
+                <Button onClick={stopShareScreenNow}>
+                  <StopScreenShare />
+                </Button>
+              ) : (
+                <Button onClick={shareScreenNow}>
+                  <ScreenShare />
                 </Button>
               )}
             </Typography>

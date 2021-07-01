@@ -87,6 +87,14 @@ const ContextProvider = ({ children }) => {
     window.location.reload();
   };
 
+  const startVideo=()=>{
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((currentStream) => {
+        setStream(currentStream);
+        myVideo.current.srcObject = currentStream;
+      });
+  }
   const cancelVideo = () => {
     console.log("No video");
     setVideoOn(false);
@@ -119,10 +127,35 @@ const ContextProvider = ({ children }) => {
       .map((t) => (t.kind == "audio" ? (t.enabled = true) : null));
   };
 
+  const shareScreenNow = () => {
+    console.log("sharing screen now");
+    navigator.mediaDevices
+      .getDisplayMedia({
+        video: { cursor: "always" },
+        audio: { echoCancellation: true, noiseSuppresion: true },
+      })
+      .then((currentStream) => {
+        setStream(currentStream);
+        myVideo.current.srcObject = currentStream;
+      });
+
+    setShareScreen(true);
+  };
+  const stopShareScreenNow = () => {
+    console.log("not sharing screen now");
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((currentStream) => {
+        setStream(currentStream);
+        myVideo.current.srcObject = currentStream;
+      });
+    setShareScreen(false);
+  };
   return (
     <SocketContext.Provider
       value={{
         call,
+        startVideo,
         callAccepted,
         myVideo,
         userVideo,
@@ -130,6 +163,9 @@ const ContextProvider = ({ children }) => {
         name,
         setName,
         callEnded,
+        shareScreenNow,
+        stopShareScreenNow,
+        shareScreen,
         me,
         videoOn,
         voiceOn,
