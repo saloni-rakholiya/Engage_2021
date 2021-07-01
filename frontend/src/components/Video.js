@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mycard: {
     padding: "10px",
-    border: "2px solid black",
+    backgroundColor: "#92D7DC",
     margin: "10px",
   },
 }));

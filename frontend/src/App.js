@@ -8,14 +8,14 @@ import Notifications from "./components/Notifications";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    borderRadius: 15,
     margin: "30px 100px",
     display: "flex",
+    padding: "5px",
+    backgroundColor: "#92D7DC",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     width: "600px",
-    border: "2px solid black",
 
     [theme.breakpoints.down("xs")]: {
       width: "90%",
@@ -38,9 +38,7 @@ const App = () => {
   return (
     <div className={classes.wrapper}>
       <AppBar className={classes.appBar} position="static" color="inherit">
-        <Typography variant="h4" align="center">
-          Teams Clone
-        </Typography>
+        <h1 align="center">TEAMS CLONE</h1>
       </AppBar>
       <Video />
       <Options>

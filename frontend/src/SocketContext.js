@@ -87,24 +87,44 @@ const ContextProvider = ({ children }) => {
     window.location.reload();
   };
 
-  const startVideo=()=>{
+  const startVideo = () => {
+    setVideoOn(true);
+    setShareScreen(false);
+    stream.getTracks().forEach((track) => track.stop());
+
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
         myVideo.current.srcObject = currentStream;
       });
-  }
+  };
   const cancelVideo = () => {
     console.log("No video");
     setVideoOn(false);
     myVideo.current.srcObject
       .getTracks()
+      //  .map((t) => (t.kind == "video" ? t.stop() : null));
       .map((t) => (t.kind == "video" ? (t.enabled = false) : null));
   };
 
   const enableVideo = () => {
     console.log("Video on");
+    // if (voiceOn) {
+    //   navigator.mediaDevices
+    //     .getUserMedia({ video: true, audio: true })
+    //     .then((currentStream) => {
+    //       setStream(currentStream);
+    //       myVideo.current.srcObject = currentStream;
+    //     });
+    // } else {
+    //   navigator.mediaDevices
+    //     .getUserMedia({ video: true })
+    //     .then((currentStream) => {
+    //       setStream(currentStream);
+    //       myVideo.current.srcObject = currentStream;
+    //     });
+    // }
     myVideo.current.srcObject
       .getTracks()
       .map((t) => (t.kind == "video" ? (t.enabled = true) : null));
@@ -143,6 +163,8 @@ const ContextProvider = ({ children }) => {
   };
   const stopShareScreenNow = () => {
     console.log("not sharing screen now");
+    stream.getTracks().forEach((track) => track.stop());
+
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {

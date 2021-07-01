@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: "10px 20px",
-    border: "2px solid black",
+    backgroundColor: "#92D7DC",
   },
 }));
 
@@ -67,7 +67,7 @@ const Options = ({ children }) => {
               <CopyToClipboard text={me} className={classes.margin}>
                 <Button
                   variant="contained"
-                  color="primary"
+                  style={{ backgroundColor: "#0B6D74", color: "#FFFFFF" }}
                   fullWidth
                   startIcon={<Assignment fontSize="large" />}
                 >
@@ -88,7 +88,7 @@ const Options = ({ children }) => {
               {callAccepted && !callEnded ? (
                 <Button
                   variant="contained"
-                  color="secondary"
+                  style={{ backgroundColor: "#0B6D74", color: "#FFFFFF" }}
                   startIcon={<PhoneDisabled fontSize="large" />}
                   fullWidth
                   onClick={leaveCall}
@@ -99,7 +99,7 @@ const Options = ({ children }) => {
               ) : (
                 <Button
                   variant="contained"
-                  color="primary"
+                  style={{ backgroundColor: "#0B6D74", color: "#FFFFFF" }}
                   startIcon={<Phone fontSize="large" />}
                   fullWidth
                   onClick={() => callUser(idToCall)}
