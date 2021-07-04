@@ -8,9 +8,10 @@ import Notifications from "./components/Notifications";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    margin: "30px 100px",
+    margin: "10px 100px",
     display: "flex",
     padding: "5px",
+    marginBottom: "5px",
     backgroundColor: "#92D7DC",
     flexDirection: "row",
     justifyContent: "center",
@@ -38,12 +39,12 @@ const App = () => {
   return (
     <div className={classes.wrapper}>
       <AppBar className={classes.appBar} position="static" color="inherit">
-        <h1 align="center">TEAMS CLONE</h1>
+        <h2 align="center">TEAMS CLONE</h2>
       </AppBar>
-      <Video />
       <Options>
         <Notifications />
       </Options>
+      <Video />
     </div>
   );
 };

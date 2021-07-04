@@ -25,20 +25,20 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     width: "600px",
-    margin: "35px 0",
+    margin: "4px 0",
     padding: 0,
     [theme.breakpoints.down("xs")]: {
       width: "80%",
     },
   },
   margin: {
-    marginTop: 20,
+    marginTop: 5,
   },
   padding: {
-    padding: 20,
+    padding: 5,
   },
   paper: {
-    padding: "10px 20px",
+    padding: "2px 5px",
     backgroundColor: "#92D7DC",
   },
 }));
@@ -55,9 +55,6 @@ const Options = ({ children }) => {
         <form className={classes.root} noValidate autoComplete="off">
           <Grid container className={classes.boxx}>
             <Grid item xs={12} md={6} className={classes.padding}>
-              <Typography gutterBottom variant="h6">
-                Account Info
-              </Typography>
               <TextField
                 label="Name"
                 value={name}
@@ -71,14 +68,11 @@ const Options = ({ children }) => {
                   fullWidth
                   startIcon={<Assignment fontSize="large" />}
                 >
-                  Copy Your ID
+                  Generate Link
                 </Button>
               </CopyToClipboard>
             </Grid>
             <Grid item xs={12} md={6} className={classes.padding}>
-              <Typography gutterBottom variant="h6">
-                Make a call
-              </Typography>
               <TextField
                 label="ID to call"
                 value={idToCall}

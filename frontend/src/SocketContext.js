@@ -1,3 +1,4 @@
+import { ColorLensOutlined } from "@material-ui/icons";
 import React, { createContext, useState, useRef, useEffect } from "react";
 import Peer from "simple-peer";
 import { io } from "socket.io-client";
@@ -27,6 +28,10 @@ const ContextProvider = ({ children }) => {
       .then((currentStream) => {
         setStream(currentStream);
         myVideo.current.srcObject = currentStream;
+        setVideoOn(false);
+        myVideo.current.srcObject
+          .getTracks()
+          .map((t) => (t.kind == "video" ? (t.enabled = false) : null));
       });
 
     socket.on("me", (id) => setMe(id));
@@ -50,7 +55,12 @@ const ContextProvider = ({ children }) => {
     });
 
     peer.signal(call.signal);
-
+    //
+    // peer.on("data", function (data) {
+    //   console.log("getting!hi!");
+    //   console.log(data);
+    // });
+    //
     connectionRef.current = peer;
   };
 
@@ -75,8 +85,25 @@ const ContextProvider = ({ children }) => {
 
       peer.signal(signal);
     });
-
+    // peer.write("helloopop");
     connectionRef.current = peer;
+  };
+
+  const sendMessage = () => {
+    const peer = new Peer({ initiator: true, trickle: false, stream });
+    peer.on("open", function () {
+      console.log("gone!hi!");
+      peer.send("hi!");
+    });
+  };
+  const getMessage = () => {
+    const peer = new Peer({ initiator: true, trickle: false, stream });
+    peer.on("connection", function (conn) {
+      conn.on("data", function (data) {
+        console.log("getting!hi!");
+        console.log(data);
+      });
+    });
   };
 
   const leaveCall = () => {
@@ -110,6 +137,7 @@ const ContextProvider = ({ children }) => {
 
   const enableVideo = () => {
     console.log("Video on");
+    setVideoOn(true);
     // if (voiceOn) {
     //   navigator.mediaDevices
     //     .getUserMedia({ video: true, audio: true })
@@ -128,8 +156,6 @@ const ContextProvider = ({ children }) => {
     myVideo.current.srcObject
       .getTracks()
       .map((t) => (t.kind == "video" ? (t.enabled = true) : null));
-
-    setVideoOn(true);
   };
 
   const cancelAudio = () => {
@@ -150,6 +176,7 @@ const ContextProvider = ({ children }) => {
 
   const shareScreenNow = () => {
     console.log("sharing screen now");
+
     navigator.mediaDevices
       .getDisplayMedia({
         video: { cursor: "always" },
@@ -199,6 +226,8 @@ const ContextProvider = ({ children }) => {
         cancelAudio,
         enableAudio,
         enableVideo,
+        getMessage,
+        sendMessage,
       }}
     >
       {children}
