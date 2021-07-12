@@ -25,11 +25,31 @@ io.on("connection", (socket) => {
   });
 
   socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-    io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+    io.to(userToCall).emit("callUser", {
+      userToCall,
+      signal: signalData,
+      from,
+      name,
+    });
+    io.to(from).emit("registercallUser", {
+      userToCall,
+      signal: signalData,
+      from,
+      name,
+    });
   });
 
   socket.on("answerCall", (data) => {
     io.to(data.to).emit("callAccepted", data.signal);
+    io.to(data.to).emit("stopcalling");
+  });
+
+  socket.on("rejectCall", (data) => {
+    io.to(data.to).emit("callRejected");
+  });
+
+  socket.on("private message", (anotherSocketId, name, message) => {
+    socket.to(anotherSocketId).emit("private message", { name, message });
   });
 });
 

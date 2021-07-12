@@ -1,22 +1,27 @@
-import { ColorLensOutlined } from "@material-ui/icons";
 import React, { createContext, useState, useRef, useEffect } from "react";
 import Peer from "simple-peer";
+import ScrollableFeed from "react-scrollable-feed";
 import { io } from "socket.io-client";
+import "./styles/socketcontext.css";
 
 const SocketContext = createContext();
 
 const socket = io("http://localhost:5000/");
+// const socket = io("https://teams-clonee.herokuapp.com/");
 
 const ContextProvider = ({ children }) => {
   const [callAccepted, setCallAccepted] = useState(false);
   const [voiceOn, setVoiceOn] = useState(true);
   const [videoOn, setVideoOn] = useState(true);
-  const [shareScreen, setShareScreen] = useState(false);
   const [me, setMe] = useState("");
   const [callEnded, setCallEnded] = useState(false);
   const [stream, setStream] = useState();
   const [name, setName] = useState("");
   const [call, setCall] = useState({});
+  const [state, setState] = useState({ message: "", name: "" });
+  const [chat, setChat] = useState([]);
+  const [iscalling, setIscalling] = useState(false);
+  const [shareScreen, setShareScreen] = useState();
 
   const myVideo = useRef();
   const userVideo = useRef();
@@ -36,18 +41,59 @@ const ContextProvider = ({ children }) => {
 
     socket.on("me", (id) => setMe(id));
 
-    socket.on("callUser", ({ from, name: callerName, signal }) => {
-      setCall({ isReceivingCall: true, from, name: callerName, signal });
+    socket.on("callUser", ({ userToCall, from, name: callerName, signal }) => {
+      setCall({
+        isReceivingCall: true,
+        from,
+        name: callerName,
+        signal,
+        to: userToCall,
+      });
     });
+
+    socket.on("callRejected", () => {
+      setIscalling(false);
+      window.alert("Your Call was Rejected!");
+    });
+
+    socket.on("stopcalling", () => {
+      console.log("stoppp");
+      setIscalling(false);
+    });
+    socket.on(
+      "registercallUser",
+      ({ userToCall, from, name: callerName, signal }) => {
+        console.log(userToCall);
+        console.log(from);
+        setCall({
+          isReceivingCall: false,
+          from,
+          name: callerName,
+          signal,
+          to: userToCall,
+        });
+      }
+    );
   }, []);
+
+  //
+  useEffect(() => {
+    socket.on("private message", ({ name, message }) => {
+      console.log("reading");
+      setChat([...chat, { name, message }]);
+    });
+
+    return () => null;
+  }, [chat]);
+  //
 
   const answerCall = () => {
     setCallAccepted(true);
-
+    setIscalling(false);
     const peer = new Peer({ initiator: false, trickle: false, stream });
 
     peer.on("signal", (data) => {
-      socket.emit("answerCall", { signal: data, to: call.from });
+      socket.emit("answerCall", { signal: data, to: call.from, from: me });
     });
 
     peer.on("stream", (currentStream) => {
@@ -55,16 +101,18 @@ const ContextProvider = ({ children }) => {
     });
 
     peer.signal(call.signal);
-    //
-    // peer.on("data", function (data) {
-    //   console.log("getting!hi!");
-    //   console.log(data);
-    // });
-    //
+
     connectionRef.current = peer;
   };
 
+  const rejectCall = () => {
+    setCallAccepted(false);
+    setCall({});
+    socket.emit("rejectCall", { to: call.from });
+  };
   const callUser = (id) => {
+    console.log("Calling");
+    setIscalling(true);
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
     peer.on("signal", (data) => {
@@ -85,25 +133,8 @@ const ContextProvider = ({ children }) => {
 
       peer.signal(signal);
     });
-    // peer.write("helloopop");
-    connectionRef.current = peer;
-  };
 
-  const sendMessage = () => {
-    const peer = new Peer({ initiator: true, trickle: false, stream });
-    peer.on("open", function () {
-      console.log("gone!hi!");
-      peer.send("hi!");
-    });
-  };
-  const getMessage = () => {
-    const peer = new Peer({ initiator: true, trickle: false, stream });
-    peer.on("connection", function (conn) {
-      conn.on("data", function (data) {
-        console.log("getting!hi!");
-        console.log(data);
-      });
-    });
+    connectionRef.current = peer;
   };
 
   const leaveCall = () => {
@@ -114,45 +145,17 @@ const ContextProvider = ({ children }) => {
     window.location.reload();
   };
 
-  const startVideo = () => {
-    setVideoOn(true);
-    setShareScreen(false);
-    stream.getTracks().forEach((track) => track.stop());
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((currentStream) => {
-        setStream(currentStream);
-        myVideo.current.srcObject = currentStream;
-      });
-  };
   const cancelVideo = () => {
     console.log("No video");
     setVideoOn(false);
     myVideo.current.srcObject
       .getTracks()
-      //  .map((t) => (t.kind == "video" ? t.stop() : null));
       .map((t) => (t.kind == "video" ? (t.enabled = false) : null));
   };
 
   const enableVideo = () => {
     console.log("Video on");
     setVideoOn(true);
-    // if (voiceOn) {
-    //   navigator.mediaDevices
-    //     .getUserMedia({ video: true, audio: true })
-    //     .then((currentStream) => {
-    //       setStream(currentStream);
-    //       myVideo.current.srcObject = currentStream;
-    //     });
-    // } else {
-    //   navigator.mediaDevices
-    //     .getUserMedia({ video: true })
-    //     .then((currentStream) => {
-    //       setStream(currentStream);
-    //       myVideo.current.srcObject = currentStream;
-    //     });
-    // }
     myVideo.current.srcObject
       .getTracks()
       .map((t) => (t.kind == "video" ? (t.enabled = true) : null));
@@ -174,38 +177,75 @@ const ContextProvider = ({ children }) => {
       .map((t) => (t.kind == "audio" ? (t.enabled = true) : null));
   };
 
-  const shareScreenNow = () => {
-    console.log("sharing screen now");
+  // const shareScreenNow = () => {
+  //   console.log("sharing screen now");
 
-    navigator.mediaDevices
-      .getDisplayMedia({
-        video: { cursor: "always" },
-        audio: { echoCancellation: true, noiseSuppresion: true },
-      })
-      .then((currentStream) => {
-        setStream(currentStream);
-        myVideo.current.srcObject = currentStream;
-      });
+  //   navigator.mediaDevices
+  //     .getDisplayMedia({
+  //       video: true,
+  //       audio: { echoCancellation: true, noiseSuppresion: true },
+  //     })
+  //     .then((currentStream) => {
+  //       console.log("hello");
+  //       console.log(currentStream);
+  //       setStream(currentStream);
+  //       myVideo.current.srcObject = currentStream;
+  //       console.log(stream);
+  //     });
 
-    setShareScreen(true);
+  //   setShareScreen(true);
+  // };
+  // const stopShareScreenNow = () => {
+  //   console.log("not sharing screen now");
+  //   stream.getTracks().forEach((track) => track.stop());
+
+  //   navigator.mediaDevices
+  //     .getUserMedia({ video: true, audio: true })
+  //     .then((currentStream) => {
+  //       setStream(currentStream);
+  //       myVideo.current.srcObject = currentStream;
+  //     });
+  //   setShareScreen(false);
+  // };
+
+  // //
+
+  const onMessageSubmit = (e) => {
+    console.log("submitted");
+    const { name, message } = state;
+    setChat([...chat, { name, message }]);
+    if (call.to == me) {
+      socket.emit("private message", call.from, name, message);
+    } else {
+      socket.emit("private message", call.to, name, message);
+    }
+    e.preventDefault();
+    setState({ message: "", name });
   };
-  const stopShareScreenNow = () => {
-    console.log("not sharing screen now");
-    stream.getTracks().forEach((track) => track.stop());
 
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((currentStream) => {
-        setStream(currentStream);
-        myVideo.current.srcObject = currentStream;
-      });
-    setShareScreen(false);
+  const renderChat = () => {
+    return (
+      <ScrollableFeed>
+        {chat.map(({ name, message }, index) => (
+          <div key={index}>
+            <h3 className="msg">
+              {name} -{`>`} <span>{message}</span>
+            </h3>
+          </div>
+        ))}
+      </ScrollableFeed>
+    );
   };
+
+  const onTextChange = (e) => {
+    setState({ ...state, [e.target.name]: e.target.value });
+  };
+
+  //
   return (
     <SocketContext.Provider
       value={{
         call,
-        startVideo,
         callAccepted,
         myVideo,
         userVideo,
@@ -213,9 +253,6 @@ const ContextProvider = ({ children }) => {
         name,
         setName,
         callEnded,
-        shareScreenNow,
-        stopShareScreenNow,
-        shareScreen,
         me,
         videoOn,
         voiceOn,
@@ -226,8 +263,13 @@ const ContextProvider = ({ children }) => {
         cancelAudio,
         enableAudio,
         enableVideo,
-        getMessage,
-        sendMessage,
+        onMessageSubmit,
+        renderChat,
+        onTextChange,
+        chat,
+        state,
+        iscalling,
+        rejectCall,
       }}
     >
       {children}

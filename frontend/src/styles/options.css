@@ -1,0 +1,35 @@
+.callingtxt {
+  color: green;
+  animation: blinkingText 1.2s infinite;
+}
+@keyframes blinkingText {
+  0% {
+    color: green;
+  }
+  49% {
+    color: green;
+  }
+  60% {
+    color: transparent;
+  }
+  99% {
+    color: transparent;
+  }
+  100% {
+    color: green;
+  }
+}
+
+.bigdiv {
+  display: "flex";
+  justify-content: "space-around";
+}
+
+.answeringbtn {
+  background-color: green;
+  color: #ffffff;
+}
+.rejectingbtn {
+  background-color: #ff0000;
+  color: #ffffff;
+}

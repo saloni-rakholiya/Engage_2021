@@ -1,22 +1,31 @@
 import React, { useContext } from "react";
 import { Button } from "@material-ui/core";
-
+import "../styles/options.css";
 import { SocketContext } from "../SocketContext";
 
 const Notifications = () => {
-  const { answerCall, call, callAccepted } = useContext(SocketContext);
+  const { rejectCall, answerCall, call, callAccepted } =
+    useContext(SocketContext);
 
   return (
     <>
       {call.isReceivingCall && !callAccepted && (
-        <div style={{ display: "flex", justifyContent: "space-around" }}>
-          <h2>{call.name} is calling :</h2>
+        <div className="bigdiv">
+          <h2 className="callingtxt">{call.name} Calling :</h2>
           <Button
             variant="contained"
-            style={{ backgroundColor: "#0B6D74", color: "#FFFFFF" }}
+            className="answeringbtn"
             onClick={answerCall}
           >
             Answer
+          </Button>
+
+          <Button
+            variant="contained"
+            className="rejectingbtn"
+            onClick={rejectCall}
+          >
+            Reject
           </Button>
         </div>
       )}
