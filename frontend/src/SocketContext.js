@@ -56,15 +56,19 @@ const ContextProvider = ({ children }) => {
       window.alert("Your Call was Rejected!");
     });
 
+    socket.on("callcut", () => {
+      window.alert("Call has been cut by other user!");
+      // window.location.reload();
+    });
+
     socket.on("stopcalling", () => {
-      console.log("stoppp");
       setIscalling(false);
     });
     socket.on(
       "registercallUser",
       ({ userToCall, from, name: callerName, signal }) => {
-        console.log(userToCall);
-        console.log(from);
+        // console.log("regisering call");
+        setIscalling(true);
         setCall({
           isReceivingCall: false,
           from,
@@ -107,12 +111,17 @@ const ContextProvider = ({ children }) => {
 
   const rejectCall = () => {
     setCallAccepted(false);
-    setCall({});
     socket.emit("rejectCall", { to: call.from });
+    setCall({});
   };
+
+  // const stopCalling=()=>{
+  //   setCallAccepted(false);
+  //   setIscalling(false);
+  //   setCall({});
+  // }
   const callUser = (id) => {
-    console.log("Calling");
-    setIscalling(true);
+    // console.log("Calling");
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
     peer.on("signal", (data) => {
@@ -139,14 +148,17 @@ const ContextProvider = ({ children }) => {
 
   const leaveCall = () => {
     setCallEnded(true);
-
+    if (call.to == me) {
+      socket.emit("callcut", call.from);
+    } else {
+      socket.emit("callcut", call.to);
+    }
     connectionRef.current.destroy();
-
     window.location.reload();
   };
 
   const cancelVideo = () => {
-    console.log("No video");
+    // console.log("No video");
     setVideoOn(false);
     myVideo.current.srcObject
       .getTracks()
@@ -154,7 +166,7 @@ const ContextProvider = ({ children }) => {
   };
 
   const enableVideo = () => {
-    console.log("Video on");
+    // console.log("Video on");
     setVideoOn(true);
     myVideo.current.srcObject
       .getTracks()
@@ -162,7 +174,7 @@ const ContextProvider = ({ children }) => {
   };
 
   const cancelAudio = () => {
-    console.log("No Audio");
+    // console.log("No Audio");
     setVoiceOn(false);
     myVideo.current.srcObject
       .getTracks()
@@ -171,7 +183,7 @@ const ContextProvider = ({ children }) => {
 
   const enableAudio = () => {
     setVoiceOn(true);
-    console.log("Audio On");
+    // console.log("Audio On");
     myVideo.current.srcObject
       .getTracks()
       .map((t) => (t.kind == "audio" ? (t.enabled = true) : null));
@@ -211,7 +223,7 @@ const ContextProvider = ({ children }) => {
   // //
 
   const onMessageSubmit = (e) => {
-    console.log("submitted");
+    // console.log("submitted");
     const { name, message } = state;
     setChat([...chat, { name, message }]);
     if (call.to == me) {

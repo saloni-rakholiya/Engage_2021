@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   socket.emit("me", socket.id);
-
+  // console.log(io.sockets);
   socket.on("disconnect", () => {
     socket.broadcast.emit("callEnded");
   });
@@ -48,6 +48,10 @@ io.on("connection", (socket) => {
     io.to(data.to).emit("callRejected");
   });
 
+  socket.on("callcut", (anotherSocketId) => {
+    // console.log("cutting");
+    io.to(anotherSocketId).emit("callcut");
+  });
   socket.on("private message", (anotherSocketId, name, message) => {
     socket.to(anotherSocketId).emit("private message", { name, message });
   });

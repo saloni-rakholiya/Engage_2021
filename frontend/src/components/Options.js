@@ -20,11 +20,11 @@ const Options = ({ children }) => {
   } = useContext(SocketContext);
   const [idToCall, setIdToCall] = useState("");
   const classes = useStyles();
-  console.log(iscalling);
+  // console.log(iscalling);
   return (
     <Container className={classes.container}>
       <Paper elevation={10} className={classes.paper}>
-        {callAccepted && !callEnded ? null : (
+        {callAccepted && !callEnded && !iscalling ? null : (
           <form className={classes.root} noValidate autoComplete="off">
             <Grid container className={classes.boxx}>
               <Grid item xs={12} md={6} className={classes.padding}>
@@ -84,7 +84,18 @@ const Options = ({ children }) => {
                 )}
               </Grid>
               {iscalling ? (
-                <h2 className="callingtxt">Calling the other user!!</h2>
+                <>
+                  <h2 className="callingtxt">Calling the other user!!</h2>
+                  {/* <Button
+                variant="contained"
+                style={{ backgroundColor: "#FF0000", color: "#FFFFFF", margin:"4px" }}
+                startIcon={<PhoneDisabled fontSize="large" />}
+                onClick={stopCalling}
+                className={classes.margin}
+              >
+                Stop Calling
+              </Button> */}
+                </>
               ) : null}
             </Grid>
           </form>
