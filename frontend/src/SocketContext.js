@@ -13,7 +13,7 @@ const socket = io("https://teams-clone-engage2021.herokuapp.com/");
 const ContextProvider = ({ children }) => {
   const [callAccepted, setCallAccepted] = useState(false);
   const [voiceOn, setVoiceOn] = useState(true);
-  const [videoOn, setVideoOn] = useState(true);
+  const [videoOn, setVideoOn] = useState(false);
   const [me, setMe] = useState("");
   const [callEnded, setCallEnded] = useState(false);
   const [stream, setStream] = useState();

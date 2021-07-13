@@ -32,6 +32,19 @@ A web-app that lets users connect and communicate in real-time, sharing their vi
 - Option to on and off video stream
 - Chat application for the 2 users during the call
 
+## How to use
+
+- Go to [Link](https://teams-engage-2021.netlify.app/)
+- Allow the app to access microphone and camera (Mandatory)
+- Click on Generate Link option and send the copied code to the user2 you want to call
+- User2 should paste the code in the "Copy ID" placeholder, add a name to call-with (optional), and click on call option.
+- If it shows "Callee doesn't exist", that means the code doesn't exist or is outdated, get a new code.
+- Otherwise, wait till the other person accepts the call.
+
+## Snapshot
+
+<img src="screenshots/call2.png" width="450" >
+
 ## Seting Up The App (On local system)
 
 - Clone this repository ("git clone repo-link")
