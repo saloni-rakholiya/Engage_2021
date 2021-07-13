@@ -6,8 +6,9 @@ import "./styles/socketcontext.css";
 
 const SocketContext = createContext();
 
-const socket = io("http://localhost:5000/");
+// const socket = io("http://localhost:5000/");
 // const socket = io("https://teams-clonee.herokuapp.com/");
+const socket = io("https://teams-clone-engage2021.herokuapp.com/");
 
 const ContextProvider = ({ children }) => {
   const [callAccepted, setCallAccepted] = useState(false);
@@ -121,7 +122,6 @@ const ContextProvider = ({ children }) => {
   };
 
   const callUser = (id) => {
-
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
     peer.on("signal", (data) => {
@@ -241,7 +241,8 @@ const ContextProvider = ({ children }) => {
         {chat.map(({ name, message }, index) => (
           <div key={index}>
             <h3 className="msg">
-              {name} -{`>`} <span>{message}</span>
+              <span style={{ color: "#008080" }}>{name}</span> -{`>`}{" "}
+              <span>{message}</span>
             </h3>
           </div>
         ))}
