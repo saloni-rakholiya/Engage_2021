@@ -4,9 +4,16 @@
 
 A web-app that lets users connect and communicate in real-time, sharing their video and audio. All it requires is to share a link to the other person, and they can enjoy a video call. The app is built using WebRTC, implemented by peerJS and socket.io is used for real time communication. The server is written in express and frontend uses ReactJS.
 
+## Sprints
+
+<img src="screenshots/sprints.png" width="400" title="hover text">
+<img src="screenshots/detailed_sprints.png" width="400" title="hover text">
+
 ## Documentation
 
 [Link to design doc](https://docs.google.com/document/d/1UaCvR_9u_36I8OXF9Ece1V8L8c807iqHlo3d3E2qsdI/edit?usp=sharing)
+
+[Link to presentation](https://docs.google.com/presentation/d/12O3CUv0XmOQnmYw16do7x_JQgMlgonJqgCcNqc2aZJM/edit?usp=sharing)
 
 ## Features Planned to be implemented
 

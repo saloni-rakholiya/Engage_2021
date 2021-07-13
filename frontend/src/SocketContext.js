@@ -58,11 +58,16 @@ const ContextProvider = ({ children }) => {
     socket.on("iddoesntexist", () => {
       window.alert("Callee ID doesn't exist!");
     });
+
     socket.on("callcut", () => {
-      window.alert("Call has been cut by other user!");
-      // window.location.reload();
+      setCallEnded(true);
+      connectionRef.current.destroy();
+      window.location.reload();
     });
 
+    socket.on("stopcalling", () => {
+      setIscalling(false);
+    });
     socket.on(
       "registercallUser",
       ({ userToCall, from, name: callerName, signal }) => {
@@ -110,18 +115,12 @@ const ContextProvider = ({ children }) => {
 
   const rejectCall = () => {
     setCallAccepted(false);
+    setIscalling(false);
     socket.emit("rejectCall", { to: call.from });
     setCall({});
   };
 
-  // const stopCalling=()=>{
-  //   setCallAccepted(false);
-  //   setIscalling(false);
-  //   setCall({});
-  // }
   const callUser = (id) => {
-    // console.log("Calling");
-    // socket.emit("checkifsocketexists", { id, me });
 
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
