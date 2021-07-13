@@ -1,23 +1,15 @@
 import React, { useState, useContext } from "react";
-import { Button, TextField, Grid, Container, Paper } from "@material-ui/core";
+import { TextField, Grid, Container, Paper } from "@material-ui/core";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Assignment, Phone, PhoneDisabled } from "@material-ui/icons";
+import { Assignment, Phone } from "@material-ui/icons";
 import { useStyles } from "../styles/options.component.style.js";
 import { SocketContext } from "../SocketContext";
 import { ColorButton } from "../styles/custombutton.js";
 import "../styles/options.css";
 
 const Options = ({ children }) => {
-  const {
-    me,
-    callAccepted,
-    name,
-    setName,
-    callEnded,
-    leaveCall,
-    callUser,
-    iscalling,
-  } = useContext(SocketContext);
+  const { me, callAccepted, name, setName, callEnded, callUser, iscalling } =
+    useContext(SocketContext);
   const [idToCall, setIdToCall] = useState("");
   const classes = useStyles();
   // console.log(iscalling);

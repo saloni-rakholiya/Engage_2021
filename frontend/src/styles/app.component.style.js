@@ -6,9 +6,10 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     padding: "5px",
     marginBottom: "5px",
-    backgroundColor: "#92D7DC",
+    backgroundColor: "black",
     flexDirection: "row",
     justifyContent: "center",
+    boxShadow: "1px 1px 1px 1px #808080",
     alignItems: "center",
     width: "600px",
 

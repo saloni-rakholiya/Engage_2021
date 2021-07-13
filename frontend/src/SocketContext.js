@@ -21,7 +21,6 @@ const ContextProvider = ({ children }) => {
   const [state, setState] = useState({ message: "", name: "" });
   const [chat, setChat] = useState([]);
   const [iscalling, setIscalling] = useState(false);
-  const [shareScreen, setShareScreen] = useState();
 
   const myVideo = useRef();
   const userVideo = useRef();
@@ -36,7 +35,7 @@ const ContextProvider = ({ children }) => {
         setVideoOn(false);
         myVideo.current.srcObject
           .getTracks()
-          .map((t) => (t.kind == "video" ? (t.enabled = false) : null));
+          .map((t) => (t.kind === "video" ? (t.enabled = false) : null));
       });
 
     socket.on("me", (id) => setMe(id));
@@ -56,14 +55,14 @@ const ContextProvider = ({ children }) => {
       window.alert("Your Call was Rejected!");
     });
 
+    socket.on("iddoesntexist", () => {
+      window.alert("Callee ID doesn't exist!");
+    });
     socket.on("callcut", () => {
       window.alert("Call has been cut by other user!");
       // window.location.reload();
     });
 
-    socket.on("stopcalling", () => {
-      setIscalling(false);
-    });
     socket.on(
       "registercallUser",
       ({ userToCall, from, name: callerName, signal }) => {
@@ -83,7 +82,7 @@ const ContextProvider = ({ children }) => {
   //
   useEffect(() => {
     socket.on("private message", ({ name, message }) => {
-      console.log("reading");
+      // console.log("reading");
       setChat([...chat, { name, message }]);
     });
 
@@ -122,6 +121,8 @@ const ContextProvider = ({ children }) => {
   // }
   const callUser = (id) => {
     // console.log("Calling");
+    // socket.emit("checkifsocketexists", { id, me });
+
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
     peer.on("signal", (data) => {
@@ -148,7 +149,7 @@ const ContextProvider = ({ children }) => {
 
   const leaveCall = () => {
     setCallEnded(true);
-    if (call.to == me) {
+    if (call.to === me) {
       socket.emit("callcut", call.from);
     } else {
       socket.emit("callcut", call.to);
@@ -162,7 +163,7 @@ const ContextProvider = ({ children }) => {
     setVideoOn(false);
     myVideo.current.srcObject
       .getTracks()
-      .map((t) => (t.kind == "video" ? (t.enabled = false) : null));
+      .map((t) => (t.kind === "video" ? (t.enabled = false) : null));
   };
 
   const enableVideo = () => {
@@ -170,7 +171,7 @@ const ContextProvider = ({ children }) => {
     setVideoOn(true);
     myVideo.current.srcObject
       .getTracks()
-      .map((t) => (t.kind == "video" ? (t.enabled = true) : null));
+      .map((t) => (t.kind === "video" ? (t.enabled = true) : null));
   };
 
   const cancelAudio = () => {
@@ -178,7 +179,7 @@ const ContextProvider = ({ children }) => {
     setVoiceOn(false);
     myVideo.current.srcObject
       .getTracks()
-      .map((t) => (t.kind == "audio" ? (t.enabled = false) : null));
+      .map((t) => (t.kind === "audio" ? (t.enabled = false) : null));
   };
 
   const enableAudio = () => {
@@ -186,7 +187,7 @@ const ContextProvider = ({ children }) => {
     // console.log("Audio On");
     myVideo.current.srcObject
       .getTracks()
-      .map((t) => (t.kind == "audio" ? (t.enabled = true) : null));
+      .map((t) => (t.kind === "audio" ? (t.enabled = true) : null));
   };
 
   // const shareScreenNow = () => {
@@ -226,7 +227,7 @@ const ContextProvider = ({ children }) => {
     // console.log("submitted");
     const { name, message } = state;
     setChat([...chat, { name, message }]);
-    if (call.to == me) {
+    if (call.to === me) {
       socket.emit("private message", call.from, name, message);
     } else {
       socket.emit("private message", call.to, name, message);

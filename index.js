@@ -19,29 +19,40 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   socket.emit("me", socket.id);
-  // console.log(io.sockets);
+  // console.log(io.sockets.sockets);
   socket.on("disconnect", () => {
     socket.broadcast.emit("callEnded");
   });
 
   socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-    io.to(userToCall).emit("callUser", {
-      userToCall,
-      signal: signalData,
-      from,
-      name,
-    });
-    io.to(from).emit("registercallUser", {
-      userToCall,
-      signal: signalData,
-      from,
-      name,
-    });
+    // console.log(io.sockets.sockets.has(userToCall));
+    if (!io.sockets.sockets.has(userToCall)) {
+      // console.log("doesnt exist");
+      io.to(from).emit("iddoesntexist");
+    } else {
+      io.to(userToCall).emit("callUser", {
+        userToCall,
+        signal: signalData,
+        from,
+        name,
+      });
+      io.to(from).emit("registercallUser", {
+        userToCall,
+        signal: signalData,
+        from,
+        name,
+      });
+    }
   });
 
   socket.on("answerCall", (data) => {
     io.to(data.to).emit("callAccepted", data.signal);
     io.to(data.to).emit("stopcalling");
+  });
+
+  socket.on("checkifsocketexists", ({ id, me }) => {
+    // console.log("once");
+    io.to(me).emit("checksockets", io.sockets.sockets.has(id));
   });
 
   socket.on("rejectCall", (data) => {

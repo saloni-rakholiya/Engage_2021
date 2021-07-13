@@ -28,11 +28,13 @@ const useStyles = makeStyles((theme) => ({
     padding: "10px",
     backgroundColor: "black",
     margin: "10px",
+    boxShadow: "1px 1px 1px 1px #808080",
   },
   mycard2: {
     padding: "10px",
     backgroundColor: "black",
     margin: "10px",
+    boxShadow: "1px 1px 1px 1px #808080",
   },
   textField: {
     width: "90%",

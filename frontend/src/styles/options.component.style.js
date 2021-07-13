@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     padding: "2px 5px",
     backgroundColor: "black",
+    boxShadow: "1px 1px 1px 1px #808080",
   },
   textField: {
     width: "90%",
@@ -43,8 +44,6 @@ const useStyles = makeStyles((theme) => ({
   inputlabel: {
     color: "teal",
   },
-  
-  
 }));
 
 export { useStyles };

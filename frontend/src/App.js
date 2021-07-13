@@ -10,11 +10,7 @@ const App = () => {
 
   return (
     <div className={classes.wrapper}>
-      <AppBar
-        className={classes.appBar}
-        style={{ backgroundColor: "black" }}
-        position="static"
-      >
+      <AppBar className={classes.appBar} position="static">
         <h2 align="center" color="white">
           TEAMS CLONE
         </h2>
